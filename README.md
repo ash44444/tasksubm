@@ -1,21 +1,21 @@
-# Seller Product Management API
+# 🚀 Seller Product Management API
 
-Backend system built with Node.js, Express, MongoDB for Admin & Seller product management.
-
----
-
-## Tech Stack
-
-- Node.js + Express.js
-- MongoDB Atlas
-- JWT Authentication (Cookie-based)
-- Zod Validation
-- Winston Logger
-- Jest + Supertest Testing
+Backend system for Admin & Seller product management built with Node.js, Express, MongoDB.
 
 ---
 
-## Base URL
+## 📌 Tech Stack
+
+* Node.js + Express.js
+* MongoDB Atlas
+* JWT Authentication (Cookie + Bearer)
+* Zod Validation
+* Winston Logger
+* PDFKit (PDF generation)
+
+---
+
+## 🌐 Base URL
 
 ```
 http://localhost:5000/api
@@ -23,10 +23,14 @@ http://localhost:5000/api
 
 ---
 
-## Authentication
+# 🔐 Authentication (IMPORTANT)
 
-- Cookie-based JWT (httpOnly, secure)
-- OR Bearer Token
+### Supported:
+
+* ✅ Cookie-based (automatic)
+* ✅ Bearer Token (manual)
+
+### Header (if using Bearer):
 
 ```
 Authorization: Bearer <token>
@@ -34,15 +38,27 @@ Authorization: Bearer <token>
 
 ---
 
-# ADMIN APIs
+# ⚠️ POSTMAN IMPORTANT NOTE
+
+If APIs work **without token**, it's because:
+
+👉 Postman auto-sends cookies
+
+### Fix:
+
+* Click **Cookies (top right in Postman)**
+* Delete `token`
+* Then test again
 
 ---
 
-## 1. Admin Login
+# 🧪 POSTMAN TESTING FLOW (STEP BY STEP)
+
+### 1️⃣ Admin Login
 
 **POST** `/admin/login`
 
-### Request
+Body:
 
 ```json
 {
@@ -51,29 +67,15 @@ Authorization: Bearer <token>
 }
 ```
 
-### Response
-
-```json
-{
-  "message": "Login successful",
-  "role": "admin",
-  "token": "jwt_token"
-}
-```
+✅ This sets cookie automatically
 
 ---
 
-## 🔹 2. Create Seller
+### 2️⃣ Create Seller
 
 **POST** `/admin/create-seller`
 
-### Headers
-
-```
-Authorization: Bearer <admin_token>
-```
-
-### Request
+Body:
 
 ```json
 {
@@ -87,38 +89,19 @@ Authorization: Bearer <admin_token>
 }
 ```
 
-### Errors
-
-- 400 → Validation error
-- 400 → Email already exists
-- 401 → Unauthorized
+🔒 Requires Admin Auth
 
 ---
 
-## 🔹 3. List Sellers
+### 3️⃣ Get Sellers (Pagination)
 
 **GET** `/admin/sellers?page=1`
 
-### Response
-
-```json
-{
-  "data": [],
-  "page": 1
-}
-```
-
 ---
 
-# SELLER APIs
-
----
-
-## 🔹 1. Seller Login
+### 4️⃣ Seller Login
 
 **POST** `/seller/login`
-
-### Request
 
 ```json
 {
@@ -127,44 +110,16 @@ Authorization: Bearer <admin_token>
 }
 ```
 
-### Response
-
-```json
-{
-  "message": "Login successful",
-  "role": "seller",
-  "token": "jwt_token"
-}
-```
-
 ---
 
-## 🔹 2. Logout
-
-**POST** `/seller/logout`
-
----
-
-# PRODUCT APIs
-
----
-
-## 🔹 1. Add Product
+### 5️⃣ Add Product
 
 **POST** `/product`
-
-### Headers
-
-```
-Authorization: Bearer <seller_token>
-```
-
-### Request
 
 ```json
 {
   "name": "Mouse",
-  "description": "Test product",
+  "description": "Test",
   "brands": [
     {
       "name": "Dell",
@@ -184,130 +139,109 @@ Authorization: Bearer <seller_token>
 
 ---
 
-## 🔹 2. Get Products
+### 6️⃣ Get Products
 
 **GET** `/product?page=1`
 
-### Headers
-
-```
-Authorization: Bearer <seller_token>
-```
-
-### Response
-
-```json
-{
-  "data": [],
-  "page": 1
-}
-```
-
 ---
 
-## 🔹 3. View Product PDF
+### 7️⃣ View Product PDF
 
 **GET** `/product/:id/pdf`
 
-### Description
-
-Returns downloadable PDF with:
-
-- Product Name
-- Description
-- Brand Details
-- Total Price
+👉 Returns PDF file
 
 ---
 
-## 🔹 4. Delete Product
+### 8️⃣ Delete Product
 
 **DELETE** `/product/:id`
 
-### Headers
-
-```
-Authorization: Bearer <seller_token>
-```
-
 ---
 
-
-
-❌ ERROR HANDLING
+# ❌ ERROR HANDLING
 
 Standard response:
 
+```json
 {
   "message": "Error message"
 }
-Status	Meaning
-400	Validation Error
-401	Unauthorized
-403	Forbidden
-404	Not Found
-500	Server Error
-🛡️ SECURITY FEATURES
-JWT Authentication (Cookie + Bearer)
-Role-based authorization
-Zod validation
-Helmet (secure headers)
-Rate limiting
-Mongo sanitize (NoSQL injection protection)
-XSS protection
-🧪 TESTING SCENARIOS (IMPORTANT)
-❌ Without Token
+```
+
+| Status | Meaning          |
+| ------ | ---------------- |
+| 400    | Validation Error |
+| 401    | Unauthorized     |
+| 403    | Forbidden        |
+| 404    | Not Found        |
+| 500    | Server Error     |
+
+---
+
+# 🛡️ SECURITY FEATURES
+
+* JWT Authentication (Cookie + Bearer)
+* Role-based authorization
+* Zod validation
+* Helmet (secure headers)
+* Rate limiting
+* Mongo sanitize (NoSQL injection protection)
+* XSS protection
+
+---
+
+# 🧪 TESTING SCENARIOS (IMPORTANT)
+
+### ❌ Without Token
+
+```
 POST /admin/create-seller
+```
 
 Response:
 
+```json
 {
   "message": "Unauthorized - No token"
 }
-❌ Wrong Password
+```
+
+---
+
+### ❌ Wrong Password
+
+```
 POST /seller/login
+```
 
 Response:
 
+```json
 {
   "message": "Invalid password"
 }
-❌ Access Other Seller Product
+```
+
+---
+
+### ❌ Access Other Seller Product
+
+```
 DELETE /product/:id
+```
 
 Response:
 
+```json
 {
   "message": "Forbidden"
 }
-
-npm run dev
-
-# 🛡️ Security Features
-
-- HTTP-only Cookies
-- Helmet (secure headers)
-- Rate Limiting
-- Mongo Sanitize (NoSQL injection protection)
-- XSS Protection
-
----
-
-# 📬 Postman Collection
-
-Import Postman collection for testing APIs.
-
----
-
-# 📘 API Docs (Swagger)
-
-```
-http://localhost:5000/api-docs
 ```
 
 ---
 
-# 🚀 Run Project
+# 🚀 RUN PROJECT
 
 ```
 npm install
