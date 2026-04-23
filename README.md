@@ -232,38 +232,56 @@ Authorization: Bearer <seller_token>
 
 ---
 
-# Error Responses
 
-```json
+
+❌ ERROR HANDLING
+
+Standard response:
+
 {
   "message": "Error message"
 }
-```
+Status	Meaning
+400	Validation Error
+401	Unauthorized
+403	Forbidden
+404	Not Found
+500	Server Error
+🛡️ SECURITY FEATURES
+JWT Authentication (Cookie + Bearer)
+Role-based authorization
+Zod validation
+Helmet (secure headers)
+Rate limiting
+Mongo sanitize (NoSQL injection protection)
+XSS protection
+🧪 TESTING SCENARIOS (IMPORTANT)
+❌ Without Token
+POST /admin/create-seller
 
-| Status | Meaning          |
-| ------ | ---------------- |
-| 400    | Validation Error |
-| 401    | Unauthorized     |
-| 403    | Forbidden        |
-| 404    | Not Found        |
-| 500    | Server Error     |
+Response:
 
----
+{
+  "message": "Unauthorized - No token"
+}
+❌ Wrong Password
+POST /seller/login
 
-# Testing
+Response:
 
-Run tests:
+{
+  "message": "Invalid password"
+}
+❌ Access Other Seller Product
+DELETE /product/:id
 
-```
-npm test
-```
+Response:
 
-Includes:
+{
+  "message": "Forbidden"
+}
 
-- Unit Testing (Jest)
-- API Testing (Supertest)
-
----
+npm run dev
 
 # 🛡️ Security Features
 
