@@ -5,12 +5,12 @@ module.exports = (req, res, next) => {
   try {
     let token;
 
-    // ✅ Check cookie
+    //  Check cookie
     if (req.cookies && req.cookies.token) {
       token = req.cookies.token;
     }
 
-    // ✅ Check Authorization header
+    //  Check Authorization header
     if (!token && req.headers.authorization) {
       token = req.headers.authorization.split(" ")[1];
     }
