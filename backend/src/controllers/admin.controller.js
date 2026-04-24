@@ -21,9 +21,9 @@ exports.login = async (req, res, next) => {
 exports.createSeller = async (req, res, next) => {
   try {
     const exists = await Seller.findOne({ email: req.body.email });
-    if (exists)
+    if (exists) {
       return res.status(400).json({ message: "Email already exists" });
-
+    }
     const hashed = await bcrypt.hash(req.body.password, 10);
 
     const seller = await Seller.create({
