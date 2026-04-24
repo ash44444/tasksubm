@@ -1,10 +1,10 @@
-# 🚀 Seller Product Management API
+#  Seller Product Management API
 
 Backend system for Admin & Seller product management built with Node.js, Express, MongoDB.
 
 ---
 
-## 📌 Tech Stack
+##  Tech Stack
 
 * Node.js + Express.js
 * MongoDB Atlas
@@ -15,7 +15,7 @@ Backend system for Admin & Seller product management built with Node.js, Express
 
 ---
 
-## 🌐 Base URL
+##  Base URL
 
 ```
 http://localhost:5000/api
@@ -23,12 +23,12 @@ http://localhost:5000/api
 
 ---
 
-# 🔐 Authentication (IMPORTANT)
+#  Authentication (IMPORTANT)
 
 ### Supported:
 
-* ✅ Cookie-based (automatic)
-* ✅ Bearer Token (manual)
+* Cookie-based (automatic)
+* Bearer Token (manual)
 
 ### Header (if using Bearer):
 
@@ -38,11 +38,11 @@ Authorization: Bearer <token>
 
 ---
 
-# ⚠️ POSTMAN IMPORTANT NOTE
+#  POSTMAN IMPORTANT NOTE
 
 If APIs work **without token**, it's because:
 
-👉 Postman auto-sends cookies
+ Postman auto-sends cookies
 
 ### Fix:
 
@@ -52,7 +52,7 @@ If APIs work **without token**, it's because:
 
 ---
 
-# 🧪 POSTMAN TESTING FLOW (STEP BY STEP)
+#  POSTMAN TESTING FLOW (STEP BY STEP)
 
 ### 1️⃣ Admin Login
 
@@ -67,7 +67,7 @@ Body:
 }
 ```
 
-✅ This sets cookie automatically
+ This sets cookie automatically
 
 ---
 
@@ -89,7 +89,7 @@ Body:
 }
 ```
 
-🔒 Requires Admin Auth
+ Requires Admin Auth
 
 ---
 
@@ -149,7 +149,7 @@ Body:
 
 **GET** `/product/:id/pdf`
 
-👉 Returns PDF file
+  Returns PDF file
 
 ---
 
@@ -159,7 +159,7 @@ Body:
 
 ---
 
-# ❌ ERROR HANDLING
+#   ERROR HANDLING
 
 Standard response:
 
@@ -179,7 +179,7 @@ Standard response:
 
 ---
 
-# 🛡️ SECURITY FEATURES
+#  SECURITY FEATURES
 
 * JWT Authentication (Cookie + Bearer)
 * Role-based authorization
@@ -191,9 +191,9 @@ Standard response:
 
 ---
 
-# 🧪 TESTING SCENARIOS (IMPORTANT)
+#  TESTING SCENARIOS (IMPORTANT)
 
-### ❌ Without Token
+###  Without Token
 
 ```
 POST /admin/create-seller
@@ -209,7 +209,7 @@ Response:
 
 ---
 
-### ❌ Wrong Password
+###  Wrong Password
 
 ```
 POST /seller/login
@@ -225,7 +225,7 @@ Response:
 
 ---
 
-### ❌ Access Other Seller Product
+###  Access Other Seller Product
 
 ```
 DELETE /product/:id
@@ -241,7 +241,7 @@ Response:
 
 ---
 
-# 🚀 RUN PROJECT
+#  RUN PROJECT
 
 ```
 npm install
@@ -250,6 +250,6 @@ npm run dev
 
 ---
 
-# 👨‍💻 Author
+#  Author
 
 Ashish Maner
