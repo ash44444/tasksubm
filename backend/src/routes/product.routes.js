@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const ctrl = require("../controllers/product.controller");
 const auth = require("../middleware/auth.middleware");
-const { productSchema } = require("../validations/product.validation");
+
 
 router.post("/", auth, ctrl.add);
 router.get("/", auth, ctrl.get);
