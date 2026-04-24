@@ -1,20 +1,43 @@
 const Seller = require("../models/Seller");
 const bcrypt = require("bcrypt");
 const { sendToken } = require("../utils/generateToken");
+const { loginSchema } = require("../validations/seller.validation");
 
+//  Seller Login
 exports.login = async (req, res, next) => {
   try {
-    const seller = await Seller.findOne({ email: req.body.email });
+    //  Validate input
+    const data = loginSchema.parse(req.body);
 
-    if (!seller) return res.status(404).json({ message: "Seller not found" });
+    //  Find seller
+    const seller = await Seller.findOne({ email: data.email });
 
-    const match = await bcrypt.compare(req.body.password, seller.password);
+    if (!seller) {
+      return res.status(404).json({
+        message: "Seller not found",
+      });
+    }
 
-    if (!match) return res.status(401).json({ message: "Invalid password" });
+    //  Compare password
+    const match = await bcrypt.compare(data.password, seller.password);
 
-    const token = sendToken(res, { id: seller._id, role: "seller" });
+    if (!match) {
+      return res.status(401).json({
+        message: "Invalid password",
+      });
+    }
 
-    res.json({ token, role: "seller" });
+    //  Generate token
+    const token = sendToken(res, {
+      id: seller._id,
+      role: "seller",
+    });
+
+    res.status(200).json({
+      token,
+      role: "seller",
+    });
+
   } catch (err) {
     next(err);
   }
