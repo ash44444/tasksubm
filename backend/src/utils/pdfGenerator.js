@@ -2,22 +2,35 @@ const PDFDocument = require("pdfkit");
 
 exports.generatePDF = (product, res) => {
   const doc = new PDFDocument();
+
   res.setHeader("Content-Type", "application/pdf");
 
-  doc.text(`Product: ${product.name}`);
-  doc.text(`Description: ${product.description}`);
+  doc.pipe(res);
 
+  // Product Info
+  doc.fontSize(16).text(`Product Name: ${product.name}`);
+  doc.moveDown();
+  doc.text(`Description: ${product.description}`);
+  doc.moveDown();
+
+  // Brands + Total
   let total = 0;
 
-  product.brands.forEach((b) => {
-    doc.text(`Brand: ${b.name}`);
-    doc.text(`Image: ${b.image}`);
-    doc.text(`Price: ${b.price}`);
-    total += b.price;
+  doc.text("Brands:");
+  doc.moveDown();
+
+  product.brands.forEach((b, index) => {
+    doc.text(`${index + 1}. Brand Name: ${b.name}`);
+    doc.text(`   Image: ${b.image}`);
+    doc.text(`   Price: ₹${b.price}`);
+    doc.moveDown();
+
+    total += b.price; // total calculation
   });
 
-  doc.text(`Total Price: ${total}`);
+  //  Total Price
+  doc.moveDown();
+  doc.fontSize(14).text(`Total Price: ₹${total}`);
 
-  doc.pipe(res);
   doc.end();
 };
