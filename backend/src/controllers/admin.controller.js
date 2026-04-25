@@ -9,14 +9,15 @@ exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (email !== "admin@gmail.com" || password !== "admin123") {
-      return res.status(401).json({
-        message: "Invalid credentials",
-      });
+      const err = new Error("Invalid credentials");
+      err.status = 401;
+      throw err;
     }
 
     const token = sendToken(res, { role: "admin" });
 
     res.status(200).json({
+      success: true,
       token,
       role: "admin",
     });
@@ -25,23 +26,25 @@ exports.login = async (req, res, next) => {
   }
 };
 
-//  Create Seller (SECURE VERSION)
+//  Create Seller
 exports.createSeller = async (req, res, next) => {
   try {
-    //  Validate input using Zod
+    // Zod validation
     const data = sellerSchema.parse(req.body);
 
+    //  Check existing user
     const exists = await Seller.findOne({ email: data.email });
+
     if (exists) {
-      return res.status(400).json({
-        message: "Email already exists",
-      });
+      const err = new Error("Email already exists");
+      err.status = 400;
+      throw err;
     }
 
-    // Hash password
+    //  Hash password
     const hashed = await bcrypt.hash(data.password, 10);
 
-    // Whitelist fields (NO ...req.body)
+    //  Create seller
     const seller = await Seller.create({
       name: data.name,
       email: data.email,
@@ -52,13 +55,17 @@ exports.createSeller = async (req, res, next) => {
       password: hashed,
     });
 
-    res.status(201).json(seller);
+    res.status(201).json({
+      success: true,
+      data: seller,
+    });
+
   } catch (err) {
     next(err);
   }
 };
 
-// Get Sellers (Pagination)
+//  Get Sellers (Pagination)
 exports.getSellers = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -69,9 +76,11 @@ exports.getSellers = async (req, res, next) => {
       .limit(limit);
 
     res.status(200).json({
+      success: true,
       page,
       data: sellers,
     });
+
   } catch (err) {
     next(err);
   }
