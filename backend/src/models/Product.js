@@ -14,7 +14,7 @@ const productSchema = new mongoose.Schema(
     description: String,
     brands: [brandSchema],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Product", productSchema);
