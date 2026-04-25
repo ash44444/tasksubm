@@ -9,9 +9,15 @@ const sellerSchema = new mongoose.Schema(
     state: String,
     skills: [String],
     password: { type: String, required: true },
-    role: { type: String, default: "seller" },
+
+    // Role-based system
+    role: {
+      type: String,
+      enum: ["admin", "seller"],
+      default: "seller",
+    },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Seller", sellerSchema);
