@@ -3,36 +3,48 @@ const bcrypt = require("bcrypt");
 const { sendToken } = require("../utils/generateToken");
 const { sellerSchema } = require("../validations/seller.validation");
 
-//  Admin Login
+//  Login (Admin + Seller from DB)
 exports.login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (email !== "admin@gmail.com" || password !== "admin123") {
+    const user = await Seller.findOne({ email });
+
+    if (!user) {
+      const err = new Error("User not found");
+      err.status = 404;
+      throw err;
+    }
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (!match) {
       const err = new Error("Invalid credentials");
       err.status = 401;
       throw err;
     }
 
-    const token = sendToken(res, { role: "admin" });
+    const token = sendToken(res, {
+      id: user._id,
+      role: user.role,
+    });
 
     res.status(200).json({
       success: true,
       token,
-      role: "admin",
+      role: user.role,
     });
+
   } catch (err) {
     next(err);
   }
 };
 
-//  Create Seller
+// ➕ Create Seller (Admin only)
 exports.createSeller = async (req, res, next) => {
   try {
-    // Zod validation
     const data = sellerSchema.parse(req.body);
 
-    //  Check existing user
     const exists = await Seller.findOne({ email: data.email });
 
     if (exists) {
@@ -41,10 +53,8 @@ exports.createSeller = async (req, res, next) => {
       throw err;
     }
 
-    //  Hash password
     const hashed = await bcrypt.hash(data.password, 10);
 
-    //  Create seller
     const seller = await Seller.create({
       name: data.name,
       email: data.email,
@@ -53,6 +63,7 @@ exports.createSeller = async (req, res, next) => {
       state: data.state,
       skills: data.skills,
       password: hashed,
+      role: "seller", //  force seller
     });
 
     res.status(201).json({
@@ -65,13 +76,13 @@ exports.createSeller = async (req, res, next) => {
   }
 };
 
-//  Get Sellers (Pagination)
+//  Get Sellers (only sellers list)
 exports.getSellers = async (req, res, next) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 5;
 
-    const sellers = await Seller.find()
+    const sellers = await Seller.find({ role: "seller" })
       .skip((page - 1) * limit)
       .limit(limit);
 
